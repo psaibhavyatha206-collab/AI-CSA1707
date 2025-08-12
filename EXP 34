@@ -1,0 +1,65 @@
+from collections import deque
+
+def monkey_banana():
+    start_state = ("door", "window", False, False)
+    goal_state = (None, "middle", True, None)
+
+    def actions(state):
+        monkey, box, has_banana, on_box = state
+        possible = []
+        positions = ["door", "window", "middle"]
+        for p in positions:
+            if p != monkey:
+                possible.append(("move", p))
+        if monkey == box and not on_box:
+            for p in positions:
+                if p != box:
+                    possible.append(("push", p))
+        if monkey == box and not on_box:
+            possible.append(("climb", None))
+        if on_box:
+            possible.append(("climb_down", None))
+        if on_box and monkey == "middle":
+            possible.append(("grab", None))
+        return possible
+
+    def result(state, action):
+        monkey, box, has_banana, on_box = state
+        act, param = action
+        if act == "move":
+            return (param, box, has_banana, False)
+        elif act == "push":
+            return (param, param, has_banana, False)
+        elif act == "climb":
+            return (monkey, box, has_banana, True)
+        elif act == "climb_down":
+            return (monkey, box, has_banana, False)
+        elif act == "grab":
+            return (monkey, box, True, on_box)
+        return state
+
+    queue = deque()
+    queue.append((start_state, []))
+    visited = set()
+
+    while queue:
+        state, path = queue.popleft()
+        if state[2] == True:
+            print("Solution found!")
+            for step in path:
+                print(step)
+            return
+        if state in visited:
+            continue
+        visited.add(state)
+        for action in actions(state):
+            new_state = result(state, action)
+            queue.append((new_state, path + [action]))
+
+    print("No solution found.")
+
+monkey_banana()
+
+OUTPUT:
+('climb', None)
+('grab', None)
