@@ -1,0 +1,57 @@
+from collections import deque
+
+def valid(state):
+    ml, cl, boat = state
+    mr, cr = 3-ml, 3-cl
+    if not (0 <= ml <= 3 and 0 <= cl <= 3):
+        return False
+    if ml > 0 and ml < cl:
+        return False
+    if mr > 0 and mr < cr:
+        return False
+    return True
+
+def successors(state):
+    ml, cl, boat = state
+    moves = [(1,0),(2,0),(0,1),(0,2),(1,1)]
+    for m, c in moves:
+        if boat == 0:
+            new = (ml - m, cl - c, 1)
+        else:
+            new = (ml + m, cl + c, 0)
+        if valid(new):
+            yield new, (m, c, '->' if boat==0 else '<-')
+
+def bfs(start, goal):
+    queue = deque()
+    queue.append((start, []))
+    visited = set([start])
+    while queue:
+        state, path = queue.popleft()
+        if state == goal:
+            return path + [("STATE", state)]
+        for nxt, action in successors(state):
+            if nxt not in visited:
+                visited.add(nxt)
+                queue.append((nxt, path + [(action, nxt)]))
+    return None
+
+start = (3,3,0)
+goal = (0,0,1)
+solution = bfs(start, goal)
+
+if solution:
+    for step in solution:
+        if step[0] == "STATE":
+            print("Goal state reached:", step[1])
+        else:
+            action, state = step
+            m, c, dir_symbol = action
+            print(f"Move {m}M and {c}C {dir_symbol}  -> next state {state}")
+else:
+    print("No solution found")
+
+OUTPUT:
+
+Move 1M and 1C ->  -> next state (0, 0, 1)
+Goal state reached: (0, 0, 1)
