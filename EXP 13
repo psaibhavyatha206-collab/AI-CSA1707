@@ -1,0 +1,18 @@
+import itertools
+def solve_cryptarithmetic():
+    letters = 'SENDMORY'  # Unique letters in puzzle
+    digits = range(10)    # Possible digits (0-9)
+    for perm in itertools.permutations(digits, len(letters)):
+        mapping = dict(zip(letters, perm))
+        if mapping['S'] == 0 or mapping['M'] == 0:
+            continue
+        send = mapping['S']*1000 + mapping['E']*100 + mapping['N']*10 + mapping['D']
+        more = mapping['M']*1000 + mapping['O']*100 + mapping['R']*10 + mapping['E']
+        money = mapping['M']*10000 + mapping['O']*1000 + mapping['N']*100 + mapping['E']*10 + mapping['Y']
+        if send + more == money:
+            print(f"SEND = {send}, MORE = {more}, MONEY = {money}")
+            print("Mapping:", mapping)
+            return
+OUTPUT:
+SEND = 9567, MORE = 1085, MONEY = 10652
+Mapping: {'S': 9, 'E': 5, 'N': 6, 'D': 7, 'M': 1, 'O': 0, 'R': 8, 'Y': 2}
